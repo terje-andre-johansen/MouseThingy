@@ -1,0 +1,5 @@
+C:\src\MouseThingy\MouseThingy\bin\Release\MouseThingy.exe.config
+C:\src\MouseThingy\MouseThingy\bin\Release\MouseThingy.exe
+C:\src\MouseThingy\MouseThingy\bin\Release\MouseThingy.pdb
+C:\src\MouseThingy\MouseThingy\obj\Release\MouseThingy.exe
+C:\src\MouseThingy\MouseThingy\obj\Release\MouseThingy.pdb

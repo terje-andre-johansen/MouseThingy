@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MouseThingy
 {
@@ -38,10 +39,14 @@ namespace MouseThingy
             GetRootOwner = 3
         }
 
-
-
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetWindowsHookEx(User32Definitions.HookType hookType, LowLevelMouseProc lpfn, IntPtr hMod, int dwThreadId);
+        public static extern IntPtr SetWindowsHookEx(User32MouseDefinitions.HookType hookType, LowLevelKeyboardProc lpfn, IntPtr hMod, int dwThreadId);
+        //[DllImport("user32.dll")]
+        //public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, WindowsMessages wParam, [In]User32KeyboardDefinitions.KEYBDINPUT lParam);
+        public delegate IntPtr LowLevelKeyboardProc(int code, IntPtr wParam, IntPtr lParam);
+        //public delegate IntPtr LowLevelKeyboardProc(int nCode, WindowsMessages wParam, [In] User32KeyboardDefinitions.KBDLLHOOKSTRUCT lParam);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetWindowsHookEx(User32MouseDefinitions.HookType hookType, LowLevelMouseProc lpfn, IntPtr hMod, int dwThreadId);
         public delegate IntPtr LowLevelMouseProc(int code, IntPtr wParam, IntPtr lParam);
         [DllImport("user32.dll")]
         public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
@@ -50,9 +55,9 @@ namespace MouseThingy
         /// </summary>
         /// <see>See MSDN documentation for further information.</see>
         [DllImport("user32.dll")]
-        public static extern bool GetCursorPos(out User32Definitions.POINT lpPoint);
+        public static extern bool GetCursorPos(out User32MouseDefinitions.POINT lpPoint);
         [DllImport("user32.dll")]
-        public static extern IntPtr WindowFromPoint(User32Definitions.POINT Point);
+        public static extern IntPtr WindowFromPoint(User32MouseDefinitions.POINT Point);
 
 
         /// <summary>
@@ -70,20 +75,28 @@ namespace MouseThingy
         public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, ExactSpelling = true, SetLastError = true)]
-        internal static extern bool GetWindowRect(IntPtr hWnd, ref User32Definitions.RECT rect);
+        internal static extern bool GetWindowRect(IntPtr hWnd, ref RECT rect);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern bool SetWindowText(IntPtr hwnd, String lpString);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, UIntPtr dwExtraInfo);
 
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, [Out] StringBuilder lParam);
         [DllImport("user32.dll")]
-        public static extern sbyte GetMessage(out User32Definitions.MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
         [DllImport("user32.dll")]
-        public  static extern bool TranslateMessage([In] ref User32Definitions.MSG lpMsg);
+        public static extern sbyte GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
         [DllImport("user32.dll")]
-        public static extern IntPtr DispatchMessage([In] ref User32Definitions.MSG lpmsg);
+        public  static extern bool TranslateMessage([In] ref MSG lpMsg);
+        [DllImport("user32.dll")]
+        public static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
 
         [DllImport("user32.dll")]
         static extern IntPtr GetProp(IntPtr hWnd, string lpString);

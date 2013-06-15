@@ -1,48 +1,31 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MouseThingy
 {
     public class MouseHooker
     {
-
-       
+        private WindowControlGroups _groups;
         private static User32Import.LowLevelMouseProc _myCallbackDelegate = null;
-        public MouseHooker()
+        public MouseHooker(WindowControlGroups groups)
         {
+            _groups = groups;
             _myCallbackDelegate = CallbackFunction;
-            User32Import.SetWindowsHookEx(User32Definitions.HookType.WH_MOUSE_LL, _myCallbackDelegate, IntPtr.Zero, 0);
+            User32Import.SetWindowsHookEx(User32MouseDefinitions.HookType.WH_MOUSE_LL, _myCallbackDelegate, IntPtr.Zero, 0);
             
         }
-
-        public void DoWork()
-        {
-            User32Definitions.MSG msg;
-            User32Definitions.POINT p;
-            User32Import.GetCursorPos(out p);
-            var tmp = User32Import.WindowFromPoint(p);
-
-            if (User32Import.GetMessage(out msg, tmp, 0, 0) > 0)
-            {
-                User32Import.TranslateMessage(ref msg);
-                User32Import.DispatchMessage(ref msg);
-            }
-        }
-
 
         private static bool _leftDown = false;
         private static bool _rightDown = false;
         static Point _prevpoint = null;
-        public static IntPtr CallbackFunction(int code, IntPtr wParam, IntPtr lParam)
+        public IntPtr CallbackFunction(int code, IntPtr wParam, IntPtr lParam)
         {
-            Console.WriteLine(code);
+            //Console.WriteLine(code);
             if (code == 0)
             {
                 var wParamAsInt = wParam.ToString("X");
-                Console.WriteLine(wParamAsInt);
-
-
-
+                //Console.WriteLine(wParamAsInt);
                 //Console.WriteLine("flags "+hookStruct.flags);
                 //Console.WriteLine("extra " + hookStruct.dwExtraInfo);
                 //Console.WriteLine("ptX " + hookStruct.pt.X + "ptY "+ hookStruct.pt.Y);
@@ -51,15 +34,34 @@ namespace MouseThingy
 
 
 
-                User32Definitions.MSLLHOOKSTRUCT hookStruct = (User32Definitions.MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(User32Definitions.MSLLHOOKSTRUCT));
+                User32MouseDefinitions.MSLLHOOKSTRUCT hookStruct = (User32MouseDefinitions.MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(User32MouseDefinitions.MSLLHOOKSTRUCT));
                 switch (wParamAsInt)
                 {
                     case "200":
-                        Console.WriteLine("mousemove");
+                        //Console.WriteLine("mousemove");
                         break;
                     case "201":
                         Console.WriteLine("left");
                         _leftDown = true;
+
+                        if (KeyboardHooker.LeftCtrDown)
+                        {
+                            User32MouseDefinitions.POINT p = hookStruct.pt;
+                            var tmp = User32Import.WindowFromPoint(p);
+                            var rect = new RECT();
+                            var rootWindow = User32Import.GetAncestor(tmp, (uint)User32Import.GetAncestorFlags.GetRoot);
+                            User32Import.GetWindowRect(rootWindow, ref rect);
+                            var builder = new StringBuilder(20);
+
+                            User32Import.SendMessage(rootWindow, (uint)WindowsMessages.GETTEXT, (IntPtr)builder.Capacity, builder);
+
+
+                            _groups.AddWindowToGroup(_groups.GetCurrentControlGroup(), 
+                                new WindowControlGroups.Window(builder.ToString(), rootWindow, rect));
+
+
+                        }
+
                         break;
                     case "202":
                         Console.WriteLine("left up");
@@ -75,6 +77,25 @@ namespace MouseThingy
                     case "204":
                         Console.WriteLine("right down");
                         _rightDown = true;
+
+                        if (KeyboardHooker.LeftCtrDown)
+                        {
+                            User32MouseDefinitions.POINT p = hookStruct.pt;
+                            var tmp = User32Import.WindowFromPoint(p);
+                            var rect = new RECT();
+                            var rootWindow = User32Import.GetAncestor(tmp, (uint)User32Import.GetAncestorFlags.GetRoot);
+                            User32Import.GetWindowRect(rootWindow, ref rect);
+                            var builder = new StringBuilder(20);
+                            User32Import.SendMessage(rootWindow, (uint)WindowsMessages.GETTEXT, (IntPtr)builder.Capacity, builder);
+
+
+                            _groups.RemoveWindowFromGroup(_groups.GetCurrentControlGroup(),
+                                new WindowControlGroups.Window(builder.ToString(), rootWindow, rect));
+
+
+                        }
+
+
                         break;
                     case "205":
                         Console.WriteLine("right up");
@@ -92,10 +113,10 @@ namespace MouseThingy
 
                         if (_rightDown)
                         {
-                            User32Definitions.POINT p = hookStruct.pt;
+                            User32MouseDefinitions.POINT p = hookStruct.pt;
                             var tmp = User32Import.WindowFromPoint(p);
 
-                            var rect = new User32Definitions.RECT();
+                            var rect = new RECT();
 
 
                             var rootWindow = User32Import.GetAncestor(tmp, (uint)User32Import.GetAncestorFlags.GetRoot);
@@ -124,10 +145,10 @@ namespace MouseThingy
 
                         if (_leftDown)
                         {
-                            User32Definitions.POINT p = hookStruct.pt;
+                            User32MouseDefinitions.POINT p = hookStruct.pt;
                             var tmp = User32Import.WindowFromPoint(p);
 
-                            var rect = new User32Definitions.RECT();
+                            var rect = new RECT();
                             var rootWindow = User32Import.GetAncestor(tmp, (uint)User32Import.GetAncestorFlags.GetRoot);
                             User32Import.GetWindowRect(rootWindow, ref rect);
 
@@ -166,10 +187,10 @@ namespace MouseThingy
                 {
                     Console.WriteLine("both down");
 
-                    User32Definitions.POINT p = hookStruct.pt;
+                    User32MouseDefinitions.POINT p = hookStruct.pt;
                     //GetCursorPos(out p);
                     var tmp = User32Import.WindowFromPoint(p);
-                    var rect = new User32Definitions.RECT();
+                    var rect = new RECT();
 
                     User32Import.GetWindowRect(tmp, ref rect);
 

@@ -14,7 +14,7 @@
 
             public static Point GetCursorPosition()
             {
-                User32Definitions.POINT lpPoint;
+                User32MouseDefinitions.POINT lpPoint;
                 User32Import.GetCursorPos(out lpPoint);
                 //bool success = User32.GetCursorPos(out lpPoint);
                 // if (!success)

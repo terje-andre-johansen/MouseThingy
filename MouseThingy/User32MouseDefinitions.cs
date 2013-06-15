@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace MouseThingy
 {
-    public class User32Definitions
+    public class User32MouseDefinitions
     {
 
         public enum HookType : int
@@ -86,25 +86,7 @@ namespace MouseThingy
             }
         }
 
-        internal struct RECT
-        {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MSG
-        {
-            public IntPtr hwnd;
-            public UInt32 message;
-            public IntPtr wParam;
-            public IntPtr lParam;
-            public UInt32 time;
-            public User32Definitions.POINT pt;
-        }
-
+     
         /// <summary>
         /// Struct representing a point.
         /// </summary>
