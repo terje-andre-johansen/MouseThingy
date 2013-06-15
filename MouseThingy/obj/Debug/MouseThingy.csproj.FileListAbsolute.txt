@@ -4,3 +4,9 @@ c:\users\terjeandre\documents\visual studio 2012\Projects\MouseThingy\MouseThing
 c:\users\terjeandre\documents\visual studio 2012\Projects\MouseThingy\MouseThingy\obj\Debug\MouseThingy.exe
 c:\users\terjeandre\documents\visual studio 2012\Projects\MouseThingy\MouseThingy\obj\Debug\MouseThingy.pdb
 c:\users\terjeandre\documents\visual studio 2012\Projects\MouseThingy\MouseThingy\obj\Debug\MouseThingy.csprojResolveAssemblyReference.cache
+C:\src\MouseThingy\MouseThingy\bin\Debug\MouseThingy.exe.config
+C:\src\MouseThingy\MouseThingy\obj\Debug\MouseThingy.exe
+C:\src\MouseThingy\MouseThingy\obj\Debug\MouseThingy.pdb
+C:\src\MouseThingy\MouseThingy\bin\Debug\MouseThingy.exe
+C:\src\MouseThingy\MouseThingy\bin\Debug\MouseThingy.pdb
+C:\src\MouseThingy\MouseThingy\obj\Debug\MouseThingy.csprojResolveAssemblyReference.cache

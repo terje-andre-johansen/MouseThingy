@@ -85,5 +85,55 @@ namespace MouseThingy
                 return new Point(point.X, point.Y);
             }
         }
+
+        internal struct RECT
+        {
+            public int left;
+            public int top;
+            public int right;
+            public int bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MSG
+        {
+            public IntPtr hwnd;
+            public UInt32 message;
+            public IntPtr wParam;
+            public IntPtr lParam;
+            public UInt32 time;
+            public User32Definitions.POINT pt;
+        }
+
+        /// <summary>
+        /// Struct representing a point.
+        /// </summary>
+
+
+
+        //[StructLayout(LayoutKind.Sequential)]
+        //public struct INPUT
+        //{
+        //    internal uint type;
+        //    internal InputUnion U;
+        //    internal static int Size
+        //    {
+        //        get { return Marshal.SizeOf(typeof(INPUT)); }
+        //    }
+        //}
+
+        //[StructLayout(LayoutKind.Explicit)]
+        //internal struct InputUnion
+        //{
+        //    [FieldOffset(0)]
+        //    internal MOUSEINPUT mi;
+        //    //[FieldOffset(0)]
+        //    //internal KEYBDINPUT ki;
+        //    //[FieldOffset(0)]
+        //    //internal HARDWAREINPUT hi;
+        //}
+
+        //[DllImport("user32.dll", SetLastError=true)]
+        //static extern void MouseProc(long nCode, IntPtr wParam, IntPtr lParam);
     }
 }

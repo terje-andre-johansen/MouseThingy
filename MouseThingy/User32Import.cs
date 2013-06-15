@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MouseThingy
 {
@@ -73,5 +69,29 @@ namespace MouseThingy
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, ExactSpelling = true, SetLastError = true)]
+        internal static extern bool GetWindowRect(IntPtr hWnd, ref User32Definitions.RECT rect);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool SetWindowText(IntPtr hwnd, String lpString);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, UIntPtr dwExtraInfo);
+
+        [DllImport("user32.dll")]
+        public static extern sbyte GetMessage(out User32Definitions.MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+        [DllImport("user32.dll")]
+        public  static extern bool TranslateMessage([In] ref User32Definitions.MSG lpMsg);
+        [DllImport("user32.dll")]
+        public static extern IntPtr DispatchMessage([In] ref User32Definitions.MSG lpmsg);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetProp(IntPtr hWnd, string lpString);
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool SetProp(IntPtr hWnd, string lpString, IntPtr hData);
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        static extern IntPtr RemoveProp(IntPtr hWnd, string lpString);
+       
+    
     }
 }
