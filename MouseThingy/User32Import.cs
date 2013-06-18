@@ -104,7 +104,9 @@ namespace MouseThingy
         static extern bool SetProp(IntPtr hWnd, string lpString, IntPtr hData);
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern IntPtr RemoveProp(IntPtr hWnd, string lpString);
-       
-    
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+
     }
 }

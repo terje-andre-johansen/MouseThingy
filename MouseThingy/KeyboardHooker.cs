@@ -67,6 +67,7 @@ namespace MouseThingy
                                 Console.WriteLine("Key one and alt down");
                                 _groups.SetCurrentControlGroup(VirtualKeyShort.KEY_1.ToString());
                                 _groups.ShowControlGroup(VirtualKeyShort.KEY_1.ToString());
+                                
                                 break;
                             case VirtualKeyShort.KEY_2:
                                 Console.WriteLine("Key two and alt down");

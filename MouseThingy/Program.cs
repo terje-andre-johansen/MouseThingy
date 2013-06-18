@@ -28,6 +28,7 @@ namespace MouseThingy
                 }
                 else if (result == 0)
                 {
+                    Console.WriteLine("quit");
                     // quiting, remove hooks
                 }
                 else
@@ -38,6 +39,9 @@ namespace MouseThingy
 
             }
         }
+
+       
+
     }
 }
 

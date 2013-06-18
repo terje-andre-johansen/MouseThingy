@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using MouseThingy.Annotations;
 
 namespace MouseThingy
 {
-    public class WindowControlGroups
+    public class WindowControlGroups : INotifyPropertyChanged
     {
         private readonly Dictionary<string, List<Window>> _windows;
         public WindowControlGroups()
@@ -47,10 +52,7 @@ namespace MouseThingy
                     Console.WriteLine("Window already added");
                 }
             }
-            else
-            {
-
-            }
+            OnPropertyChanged(key);
 
 
         }
@@ -65,6 +67,7 @@ namespace MouseThingy
                                    window.PositionInfo.ToString(), window.Name, key);
                 list.Remove(window);
             }
+            OnPropertyChanged(key);
 
         }
 
@@ -93,10 +96,9 @@ namespace MouseThingy
             {
                 Console.WriteLine("containt {0} windows", list.Count);
             }
-            
-
-
             _currentControlGroup = key;
+
+            OnPropertyChanged(key);
         }
 
         public void ShowControlGroup(string key)
@@ -113,7 +115,12 @@ namespace MouseThingy
                     User32Import.SetForegroundWindow(window.Handle);
                 }
             }
+            OnPropertyChanged(key);
+        }
 
+        public Dictionary<string, List<Window>> GetWindowGroups()
+        {
+            return _windows;
         }
 
 
@@ -123,12 +130,27 @@ namespace MouseThingy
             public IntPtr Handle;
             public RECT PositionInfo;
             public string Name;
+            public string Key;
 
-            public Window(string name, IntPtr handle, RECT position)
+            public void BringToFront()
             {
-                this.Name = String.IsNullOrEmpty(name) ? name : "";
-                this.Handle = handle;
-                this.PositionInfo = position;
+                User32Import.SetForegroundWindow(Handle);
+            }
+
+
+            public Process GetWindowProcess()
+            {
+                int processId;
+                var result = User32Import.GetWindowThreadProcessId(Handle, out processId);
+                var process = Process.GetProcessById(processId);
+                return process;
+            }
+
+            public Window(string key, IntPtr handle, RECT position)
+            {
+                Key = key;
+                Handle = handle;
+                PositionInfo = position;
             }
 
             public override bool Equals(object obj)
@@ -142,8 +164,21 @@ namespace MouseThingy
                 return false;
             }
 
+            public void KillWindow()
+            {
+                GetWindowProcess().Kill();
+            }
+
 
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
