@@ -111,8 +111,7 @@ namespace MouseThingy
                 reversed.Reverse();
                 foreach (var window in reversed)
                 {
-                    User32Import.MoveWindow(window.Handle, window.PositionInfo.left, window.PositionInfo.top, window.PositionInfo.right - window.PositionInfo.left, window.PositionInfo.bottom - window.PositionInfo.top, true);
-                    User32Import.SetForegroundWindow(window.Handle);
+                   window.BringToFront();
                 }
             }
             OnPropertyChanged(key);
@@ -134,6 +133,8 @@ namespace MouseThingy
 
             public void BringToFront()
             {
+                User32Import.ShowWindow(Handle, ShowWindowCommands.Normal);
+                User32Import.MoveWindow(Handle, PositionInfo.left, PositionInfo.top, PositionInfo.right - PositionInfo.left, PositionInfo.bottom - PositionInfo.top, true);
                 User32Import.SetForegroundWindow(Handle);
             }
 

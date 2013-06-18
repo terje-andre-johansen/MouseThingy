@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -56,16 +57,39 @@ namespace MouseThingy
                         {
                             User32MouseDefinitions.POINT p = hookStruct.pt;
                             var tmp = User32Import.WindowFromPoint(p);
+
+
+
+
                             var rect = new RECT();
                             var rootWindow = User32Import.GetAncestor(tmp, (uint)User32Import.GetAncestorFlags.GetRoot);
-                            User32Import.GetWindowRect(rootWindow, ref rect);
-                            var builder = new StringBuilder(20);
 
-                            User32Import.SendMessage(rootWindow, (uint)WindowsMessages.GETTEXT, (IntPtr)builder.Capacity, builder);
+                            int processId;
+                            var result = User32Import.GetWindowThreadProcessId(tmp, out processId);
+                            var process = Process.GetProcessById(processId);
+
+                            if (process.ProcessName == "explorer")
+                            {
+                                User32Import.GetWindowRect(tmp, ref rect);
+                                //var builder = new StringBuilder(20);
+                                //User32Import.SendMessage(rootWindow, (uint)WindowsMessages.GETTEXT, (IntPtr)builder.Capacity, builder);
 
 
-                            _groups.AddWindowToGroup(_groups.GetCurrentControlGroup(),
-                                new WindowControlGroups.Window(_groups.GetCurrentControlGroup(), rootWindow, rect));
+                                _groups.AddWindowToGroup(_groups.GetCurrentControlGroup(),
+                                    new WindowControlGroups.Window(_groups.GetCurrentControlGroup(), tmp, rect));
+                            }
+                            else
+                            {
+                                User32Import.GetWindowRect(rootWindow, ref rect);
+                                //var builder = new StringBuilder(20);
+                                //User32Import.SendMessage(rootWindow, (uint)WindowsMessages.GETTEXT, (IntPtr)builder.Capacity, builder);
+
+
+                                _groups.AddWindowToGroup(_groups.GetCurrentControlGroup(),
+                                    new WindowControlGroups.Window(_groups.GetCurrentControlGroup(), rootWindow, rect));
+                            }
+
+                          
 
 
                         }
